@@ -32,7 +32,7 @@ class DatabaseManager:
             "fuel_type",
             "transmission",
             "mileage",
-            "price"
+            "price",
         ]
 
         result = {}
@@ -42,7 +42,7 @@ class DatabaseManager:
                 value = getattr(car, attr)
                 # Если атрибут является отношением (relationship), обрабатываем его соответственно
                 if isinstance(value, (FuelType, Transmission)):
-                    result[attr] = getattr(value, 'name', None)
+                    result[attr] = getattr(value, "name", None)
                 else:
                     result[attr] = str(value) if value is not None else None
 
@@ -89,7 +89,9 @@ class DatabaseManager:
         else:
             return None
 
-    def update_car_by_id(self, car_id: int, updating_data: CarUpdateSchema) -> Optional[bool]:
+    def update_car_by_id(
+        self, car_id: int, updating_data: CarUpdateSchema
+    ) -> Optional[bool]:
         try:
             # Создание запроса на обновление
             stmt = (
@@ -116,7 +118,9 @@ class DatabaseManager:
             print(f"Error updating car: {e}")
             return None  # Возвращаем None при ошибке
 
-    def get_car_by_parameters(self, page: int, page_size: int, car_filters: CarFilterSchema):
+    def get_car_by_parameters(
+        self, page: int, page_size: int, car_filters: CarFilterSchema
+    ):
         query = select(Car)
 
         brand = car_filters.brand
@@ -130,9 +134,7 @@ class DatabaseManager:
         price_max = car_filters.price_max
 
         if mileage_min > mileage_max > 0:
-            raise ValueError(
-                "Минимальный пробег не может быть больше максимального."
-            )
+            raise ValueError("Минимальный пробег не может быть больше максимального.")
         if price_max > price_min > 0:
             raise ValueError("Минимальная цена не может быть больше максимальной.")
 
@@ -190,9 +192,9 @@ class DatabaseManager:
         transmissions = ["Механическая", "Автоматическая", "Вариатор", "Робот"]
         for name in transmissions:
             if (
-                    not self.__session.query(Transmission)
-                            .filter(Transmission.name == name)
-                            .first()
+                not self.__session.query(Transmission)
+                .filter(Transmission.name == name)
+                .first()
             ):
                 transmission = Transmission(name=name)
                 self.__session.add(transmission)
@@ -202,7 +204,7 @@ class DatabaseManager:
     def __init_cars(self) -> None:
         for car in fixture_cars:
             self.add_car(car)
-        print('Машины успешно добавлены.')
+        print("Машины успешно добавлены.")
 
     def init_fixtures(self):
         self.__init_fuel_types()

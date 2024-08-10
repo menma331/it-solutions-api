@@ -12,10 +12,12 @@ def init_fixtures():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run script functions")
-    parser.add_argument('command', choices=['init_fixtures', 'start'], help="Command to execute")
+    parser.add_argument(
+        "command", choices=["init_fixtures", "start"], help="Command to execute"
+    )
     args = parser.parse_args()
 
-    if args.command == 'init_fixtures':
+    if args.command == "init_fixtures":
         init_fixtures()
-    if args.command == 'start':
-        uvicorn.run('main:app', reload=True)
+    if args.command == "start":
+        uvicorn.run("main:app", reload=True)

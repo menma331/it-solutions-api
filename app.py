@@ -24,9 +24,7 @@ async def get_car_by_id(pk: int) -> JSONResponse:
     if car:
         return JSONResponse(content={"car": car}, status_code=200)
     else:
-        return JSONResponse(
-            content={"message": "Машина не найдена."}, status_code=404
-        )
+        return JSONResponse(content={"message": "Машина не найдена."}, status_code=404)
 
 
 @app.post("/add_car")
@@ -43,41 +41,53 @@ async def add_car(car: Annotated[dict, Depends(CarSchema)]) -> dict:
 
 @app.post("/car_filter")
 async def get_car_by_parameters(
-        page: int, page_size: int,
-        car_filters: CarFilterSchema,
+    page: int,
+    page_size: int,
+    car_filters: CarFilterSchema,
 ):
     if page < 1 or page_size < 1:
         return JSONResponse(
-            content={"error": {"message": "Номер страницы и размер страницы должны быть положительными числами."}},
+            content={
+                "error": {
+                    "message": "Номер страницы и размер страницы должны быть положительными числами."
+                }
+            },
             status_code=400,
         )
     try:
         result = db_manager.get_car_by_parameters(page, page_size, car_filters)
         return result
     except ValueError:
-        return JSONResponse(content={"error": {"message": "Проверьте, что минимальное значение не превышает максимального."}}, status_code=400)
+        return JSONResponse(
+            content={
+                "error": {
+                    "message": "Проверьте, что минимальное значение не превышает максимального."
+                }
+            },
+            status_code=400,
+        )
 
 
-@app.patch('/update_car')
+@app.patch("/update_car")
 async def update_car(car_id: int, updating_car: CarUpdateSchema):
     is_updated_car = db_manager.update_car_by_id(car_id, updating_car)
     if is_updated_car:
         return JSONResponse(
-            content={
-                'message': f'Машина с id {car_id} обновлена.'
-            }, status_code=200
+            content={"message": f"Машина с id {car_id} обновлена."}, status_code=200
         )
 
-    return JSONResponse(content={'message': f'Машина с id {car_id} не найдена.'}, status_code=404)
+    return JSONResponse(
+        content={"message": f"Машина с id {car_id} не найдена."}, status_code=404
+    )
 
 
-@app.delete('/delete_car')
+@app.delete("/delete_car")
 async def delete_car_by_id(pk: int):
     car_is_delete = db_manager.delete_car_by_id(pk)
     if car_is_delete:
         return JSONResponse(
-            content={
-                'message': f'Машина с id {pk} удалена.'
-            }, status_code=200
+            content={"message": f"Машина с id {pk} удалена."}, status_code=200
         )
-    return JSONResponse(content={'message': f'Машина с id {pk} не найдена.'}, status_code=404)
+    return JSONResponse(
+        content={"message": f"Машина с id {pk} не найдена."}, status_code=404
+    )
